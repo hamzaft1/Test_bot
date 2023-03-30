@@ -1073,4 +1073,4 @@ app.add_handler(MessageHandler(telegram.ext.filters.ALL, response_message))
 
 webhook_url = '{URL}/{HOOK}'.format(URL=URL, HOOK=TOKEN)
 app.bot.setWebhook(webhook_url)
-app.run_polling()
+app.run_webhook()
