@@ -1,44 +1,51 @@
 import os
-
+from io import BytesIO
+from queue import Queue
+import requests
 from flask import Flask, request
-import telegram
-
-
-global bot
-global TOKEN
+from telegram import Bot, Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import CommandHandler, MessageHandler, Filters, CallbackQueryHandler, Dispatcher
 
 TOKEN = os.getenv("TOKEN")
 URL = os.getenv("URL")
-bot = telegram.Bot(token=TOKEN)
+bot = Bot(TOKEN)
+
+
+def welcome(update, context) -> None:
+    update.message.reply_text(f"Hello {update.message.from_user.first_name}, Welcome to SB Movies.\n"
+                              f"🔥 Download Your Favourite Movies For 💯 Free And 🍿 Enjoy it.")
+    update.message.reply_text("👇 Enter Movie Name 👇")
+
+
+
+def setup():
+    update_queue = Queue()
+    dispatcher = Dispatcher(bot, update_queue, use_context=True)
+    dispatcher.add_handler(CommandHandler('start', welcome))
+    dispatcher.add_handler(MessageHandler(Filters.text, find_movie))
+    dispatcher.add_handler(CallbackQueryHandler(movie_result))
+    return dispatcher
+
 
 app = Flask(__name__)
 
-@app.route('/{}'.format(TOKEN), methods=['POST'])
+
+@app.route('/')
+def index():
+    return 'Hello World!'
+
+
+@app.route('/{}'.format(TOKEN), methods=['GET', 'POST'])
 def respond():
-    # retrieve the message in JSON and then transform it to Telegram object
-    update = telegram.Update.de_json(request.get_json(force=True), bot)
-
-    chat_id = update.message.chat.id
-    msg_id = update.message.message_id
-
-    # Telegram understands UTF-8, so encode text for unicode compatibility
-    text = update.message.text.encode('utf-8').decode()
-    print("got text message :", text)
-    bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=msg_id)
+    update = Update.de_json(request.get_json(force=True), bot)
+    setup().process_update(update)
     return 'ok'
 
-@app.route('/set_webhook', methods=['GET', 'POST'])
+
+@app.route('/setwebhook', methods=['GET', 'POST'])
 def set_webhook():
-    s = bot.setWebhook('{URL}{HOOK}'.format(URL=URL, HOOK=TOKEN))
+    s = bot.setWebhook('{URL}/{HOOK}'.format(URL=URL, HOOK=TOKEN))
     if s:
         return "webhook setup ok"
     else:
         return "webhook setup failed"
-
-@app.route('/')
-def index():
-    return 'Live'
-
-
-if __name__ == '__main__':
-    app.run(threaded=True)
