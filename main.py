@@ -1,7 +1,6 @@
 import os
 from turtle import setup
 
-import updater as updater
 from flask import request
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ChatPermissions
 from telegram.ext import ApplicationBuilder, CallbackQueryHandler, ContextTypes, MessageHandler
@@ -1067,28 +1066,9 @@ async def clear_previuos_messages(context, query, mssg_id) -> None:
 
 
 # bot connexion
-app = ApplicationBuilder().token(TOKEN).build()
+app = ApplicationBuilder().token("6046588407:AAF35aqUhcgqF_1ZIAkk1rfUXiCQOP11DHE").build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(button_click))
 app.add_handler(MessageHandler(telegram.ext.filters.StatusUpdate.NEW_CHAT_MEMBERS | telegram.ext.filters.StatusUpdate.LEFT_CHAT_MEMBER, delete_member))
 app.add_handler(MessageHandler(telegram.ext.filters.ALL, response_message))
-
-@app.route('/')
-def index():
-    return 'Hello World!'
-
-
-@app.route('/{}'.format(TOKEN), methods=['GET', 'POST'])
-def respond():
-    update = Update.de_json(request.get_json(force=True), app)
-    setup().process_update(update)
-    return 'ok'
-
-
-@app.route('/setwebhook', methods=['GET', 'POST'])
-def set_webhook():
-    s = app.set_Webhook('{URL}/{HOOK}'.format(URL=URL, HOOK=TOKEN))
-    if s:
-        return "webhook setup ok"
-    else:
-        return "webhook setup failed"
+app.run_polling()
