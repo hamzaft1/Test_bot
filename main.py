@@ -410,6 +410,10 @@ def connect():
 conn = mysql.connector.connect(**config)
 cursor = conn.cursor()
 
+TOKEN = os.getenv("TOKEN")
+URL = os.getenv("URL")
+PORT = int(os.getenv('8080', '5000'))
+
 def SELECT_ONE(query, conn=conn):
     try:
         if conn.is_connected():
@@ -1058,10 +1062,15 @@ async def clear_previuos_messages(context, query, mssg_id) -> None:
                 break
 
 
+
+
 # bot connexion
 app = ApplicationBuilder().token("6046588407:AAF35aqUhcgqF_1ZIAkk1rfUXiCQOP11DHE").build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(button_click))
 app.add_handler(MessageHandler(telegram.ext.filters.StatusUpdate.NEW_CHAT_MEMBERS | telegram.ext.filters.StatusUpdate.LEFT_CHAT_MEMBER, delete_member))
 app.add_handler(MessageHandler(telegram.ext.filters.ALL, response_message))
+
+webhook_url = '{URL}/{HOOK}'.format(URL=URL, HOOK=TOKEN)
+app.bot.setWebhook(webhook_url)
 app.run_polling()
