@@ -411,7 +411,7 @@ conn = mysql.connector.connect(**config)
 cursor = conn.cursor()
 
 TOKEN = os.getenv("TOKEN")
-URL = os.getenv("URL")
+URL = "https://test-bot-fawn.vercel.app"
 PORT = int(os.getenv('8080', '5000'))
 
 def SELECT_ONE(query, conn=conn):
