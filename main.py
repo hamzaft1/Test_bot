@@ -410,10 +410,6 @@ def connect():
 conn = mysql.connector.connect(**config)
 cursor = conn.cursor()
 
-TOKEN = os.getenv("TOKEN")
-URL = os.getenv("URL")
-PORT = int(os.getenv('8080', '5000'))
-
 def SELECT_ONE(query, conn=conn):
     try:
         if conn.is_connected():
@@ -1068,9 +1064,4 @@ app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(button_click))
 app.add_handler(MessageHandler(telegram.ext.filters.StatusUpdate.NEW_CHAT_MEMBERS | telegram.ext.filters.StatusUpdate.LEFT_CHAT_MEMBER, delete_member))
 app.add_handler(MessageHandler(telegram.ext.filters.ALL, response_message))
-
-
-app.bot.start_webhook(listen="0.0.0.0",
-                       port=PORT,
-                       url_path=TOKEN)
-app.bot.setWebhook(URL +"/"+TOKEN)
+app.run_polling()
