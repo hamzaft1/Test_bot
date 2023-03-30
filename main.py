@@ -1061,10 +1061,6 @@ async def clear_previuos_messages(context, query, mssg_id) -> None:
             else:
                 break
 
-def set_webhook():
-    webhook_url = '{URL}/{HOOK}'.format(URL=URL, HOOK=TOKEN)
-    updater.bot.setWebhook(webhook_url)
-    return "webhook setup ok"
 
 # bot connexion
 app = ApplicationBuilder().token("6046588407:AAF35aqUhcgqF_1ZIAkk1rfUXiCQOP11DHE").build()
@@ -1077,5 +1073,4 @@ app.add_handler(MessageHandler(telegram.ext.filters.ALL, response_message))
 app.bot.start_webhook(listen="0.0.0.0",
                        port=PORT,
                        url_path=TOKEN)
-app.bot.setWebhook(URL + TOKEN)
-app.run_polling()
+app.bot.setWebhook(URL +"/"+TOKEN)
