@@ -1065,7 +1065,7 @@ async def clear_previuos_messages(context, query, mssg_id) -> None:
 
 
 # bot connexion
-app = ApplicationBuilder().token("6046588407:AAF35aqUhcgqF_1ZIAkk1rfUXiCQOP11DHE").build()
+app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(button_click))
 app.add_handler(MessageHandler(telegram.ext.filters.StatusUpdate.NEW_CHAT_MEMBERS | telegram.ext.filters.StatusUpdate.LEFT_CHAT_MEMBER, delete_member))
