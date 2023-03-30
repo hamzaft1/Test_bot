@@ -1,6 +1,8 @@
 import os
+from turtle import setup
 
 import updater as updater
+from flask import request
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ChatPermissions
 from telegram.ext import ApplicationBuilder, CallbackQueryHandler, ContextTypes, MessageHandler
 from telegram.ext import CommandHandler
@@ -1071,6 +1073,22 @@ app.add_handler(CallbackQueryHandler(button_click))
 app.add_handler(MessageHandler(telegram.ext.filters.StatusUpdate.NEW_CHAT_MEMBERS | telegram.ext.filters.StatusUpdate.LEFT_CHAT_MEMBER, delete_member))
 app.add_handler(MessageHandler(telegram.ext.filters.ALL, response_message))
 
-webhook_url = '{URL}/{HOOK}'.format(URL=URL, HOOK=TOKEN)
-app.bot.setWebhook(webhook_url)
-app.run_polling()
+@app.route('/')
+def index():
+    return 'Hello World!'
+
+
+@app.route('/{}'.format(TOKEN), methods=['GET', 'POST'])
+def respond():
+    update = Update.de_json(request.get_json(force=True), app)
+    setup().process_update(update)
+    return 'ok'
+
+
+@app.route('/setwebhook', methods=['GET', 'POST'])
+def set_webhook():
+    s = app.set_Webhook('{URL}/{HOOK}'.format(URL=URL, HOOK=TOKEN))
+    if s:
+        return "webhook setup ok"
+    else:
+        return "webhook setup failed"
